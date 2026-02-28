@@ -107,8 +107,7 @@ def run_nanobanana2_image_job(
                     _log(log, f"Image {idx + 1} upload success: {_truncate_url(image_url)}")
 
             input_payload = dict(payload["input"])
-            if image_urls:
-                input_payload["image_input"] = image_urls
+            input_payload["image_input"] = image_urls
             payload_to_send = {"model": MODEL_NAME, "input": input_payload}
 
             _log(log, "Creating Nano Banana 2 task...")

@@ -46,7 +46,7 @@ controls directly in ComfyUI.
 
 - Credits are consumed per request.
 - If the API is under heavy load, generation may take longer.
-- If no images are connected, `image_input` is omitted from the API payload.
+- If no images are connected, `image_input` is sent as an empty list.
 
 ## Debugging
 You can always visit https://kie.ai/logs to see the progress, why something may of failed. If their is a timeout you can usually see your final image/video here as well

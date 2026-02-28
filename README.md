@@ -172,7 +172,7 @@ Both workflows are meant as **examples**, not strict requirements.
 Feel free to adapt, simplify, or remix them to fit your own pipelines.
 
 ## Changelog
-- 2026-02-28: Updated Nano Banana Pro + Nano Banana 2 payload behavior to omit `image_input` when no images are connected.
+- 2026-02-28: Updated Nano Banana Pro + Nano Banana 2 payload behavior to always send `image_input` (empty list when no images are connected).
 - 2026-02-28: Added Nano Banana 2 image node with Google search toggle.
 - 2026-01-30: Added Flux 2 Image-to-Image node (Pro/Flex) with model dropdown.
 - 2026-01-30: Added Gemini 3 Pro LLM node (phase 1, experimental).

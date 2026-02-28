@@ -48,4 +48,4 @@ and the same async task flow as the other KIE image nodes.
 ## Notes
 
 - Credits are consumed per request.
-- If no images are connected, `image_input` is omitted from the API payload.
+- If no images are connected, `image_input` is sent as an empty list.

@@ -181,9 +181,8 @@ def run_nanobanana_image_job(
                 "aspect_ratio": aspect_ratio,
                 "resolution": resolution,
                 "output_format": output_format,
+                "image_input": image_urls,
             }
-            if image_urls:
-                input_payload["image_input"] = image_urls
 
             payload = {
                 "model": MODEL_NAME,
