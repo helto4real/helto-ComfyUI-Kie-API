@@ -5,6 +5,8 @@ Generate high-quality images using KIE’s Nano Banana Pro model.
 This node supports optional reference images and exposes major generation
 controls directly in ComfyUI.
 
+Maximum reference image inputs: **8**.
+
 ---
 
 ## Inputs

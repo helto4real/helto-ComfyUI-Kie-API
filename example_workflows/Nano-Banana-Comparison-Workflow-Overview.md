@@ -37,11 +37,12 @@ Pricing may change over time. Check the latest details at:
 
 - **Nano Banana Pro Image**
   - Generates images with Nano Banana Pro settings.
+  - Supports up to 8 optional reference images.
 
 - **Nano Banana 2**
   - Generates images with Nano Banana 2 settings.
-  - Supports single-image and two-image reference setups.
-  - Supports optional web search grounding.
+  - Supports up to 14 optional reference images (including single-image and two-image setups).
+  - Supports optional Google web-search grounding.
 
 ---
 

@@ -5,6 +5,8 @@ Generate images using KIE's Nano Banana 2 model.
 This node supports optional reference images, Google web-search grounding,
 and the same async task flow as the other KIE image nodes.
 
+Maximum reference image inputs: **14**.
+
 ---
 
 ## Inputs
