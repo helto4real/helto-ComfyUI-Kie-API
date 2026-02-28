@@ -124,6 +124,7 @@ Use this section after reviewing Current Available Nodes.
 - Example workflows:
   - [`Kie-AI-Nodes.json`](Kie-AI-Nodes.json)
   - [`Kie-AI-Banana-Pro-Grid.json`](Kie-AI-Banana-Pro-Grid.json)
+  - [`KIE-AI-Banana-Pro-Banana-Pro.json`](KIE-AI-Banana-Pro-Banana-Pro.json)
 
 ## Included Example Workflows
 
@@ -170,10 +171,25 @@ This pattern is useful for:
 
 ---
 
-Both workflows are meant as **examples**, not strict requirements.  
+These workflows are meant as **examples**, not strict requirements.  
 Feel free to adapt, simplify, or remix them to fit your own pipelines.
 
+---
+
+### 3) Nano Banana Pro + Nano Banana 2 Comparison Workflow
+**KIE-AI-Banana-Pro-Banana-Pro.json**
+
+This workflow is focused on direct comparison between **Nano Banana Pro** and **Nano Banana 2** in a single graph.
+
+**Overview:**
+- Uses matching prompt structure to compare output behavior side by side
+- Includes Nano Banana 2 runs with optional web-search grounding
+- Supports reference-image driven comparisons for iterative testing
+
+This is useful for quickly evaluating model preference by prompt type, fidelity, and cost/performance tradeoffs.
+
 ## Changelog
+- 2026-02-28: Added new example workflow `KIE-AI-Banana-Pro-Banana-Pro.json` to repository docs.
 - 2026-02-28: Documentation clarified Nano Banana Pro (up to 8 images) and Nano Banana 2 (up to 14 images + optional Google web search). Bumped version to 0.1.8.
 - 2026-02-28: Updated Nano Banana Pro + Nano Banana 2 payload behavior to always send `image_input` (empty list when no images are connected).
 - 2026-02-28: Added Nano Banana 2 image node with Google search toggle.
