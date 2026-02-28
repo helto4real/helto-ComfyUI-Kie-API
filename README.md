@@ -40,6 +40,9 @@ This node pack currently includes the following nodes:
 ## Image Nodes
 - **Nano Banana Pro Image**
   - Image generation node using the Googles Nano Banana Pro model
+- **Nano Banana 2 Image**
+  - Image generation node using Nano Banana 2.
+  - Supports optional Google web-search grounding and up to 14 input images.
 - **Seedream Text-to-Image / Edit**
   - Text-to-image and image-editing node for Seedream models.
   - Supports prompt-based generation and edits (edit node accepts up to 14 input images).
@@ -169,6 +172,7 @@ Both workflows are meant as **examples**, not strict requirements.
 Feel free to adapt, simplify, or remix them to fit your own pipelines.
 
 ## Changelog
+- 2026-02-28: Added Nano Banana 2 image node with Google search toggle and up to 14 input images.
 - 2026-01-30: Added Flux 2 Image-to-Image node (Pro/Flex) with model dropdown.
 - 2026-01-30: Added Gemini 3 Pro LLM node (phase 1, experimental).
 - 2026-01-30: Gemini 3 Pro LLM updated with role dropdown and media inputs (phase 1.5).

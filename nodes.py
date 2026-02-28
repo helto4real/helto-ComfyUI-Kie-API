@@ -13,6 +13,12 @@ from .kie_api.nanobanana import (
     _log,
     run_nanobanana_image_job,
 )
+from .kie_api.nanobanana2 import (
+    ASPECT_RATIO_OPTIONS as NANOBANANA2_ASPECT_RATIO_OPTIONS,
+    OUTPUT_FORMAT_OPTIONS as NANOBANANA2_OUTPUT_FORMAT_OPTIONS,
+    RESOLUTION_OPTIONS as NANOBANANA2_RESOLUTION_OPTIONS,
+    run_nanobanana2_image_job,
+)
 from .kie_api.seedream45_t2i import (
     ASPECT_RATIO_OPTIONS as SEEDREAM_ASPECT_RATIO_OPTIONS,
     QUALITY_OPTIONS as SEEDREAM_QUALITY_OPTIONS,
@@ -213,6 +219,79 @@ Outputs:
             aspect_ratio=aspect_ratio,
             resolution=resolution,
             output_format=output_format,
+            log=log,
+            poll_interval_s=poll_interval_s,
+            timeout_s=timeout_s,
+            retry_on_fail=retry_on_fail,
+            max_retries=max_retries,
+            retry_backoff_s=retry_backoff_s,
+            images=images,
+        )
+        return (image_tensor,)
+
+
+class KIE_NanoBanana2_Image:
+    HELP = """
+KIE Nano Banana 2 (Image)
+
+Generate an image using Nano Banana 2. Optionally provide up to 14 reference images
+and enable Google web-search grounding.
+
+Inputs:
+- prompt: Text prompt (required)
+- images: Optional reference images (max 14)
+- google_search: Enable Google web search grounding
+- aspect_ratio: Output aspect ratio
+- resolution: 1K / 2K / 4K
+- output_format: jpg / png
+- poll_interval_s: Status check interval
+- timeout_s: Max wait time
+- log: Console logging on/off
+
+Outputs:
+- IMAGE: ComfyUI image tensor (BHWC float32 0-1)
+"""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {"prompt": ("STRING", {"multiline": True})},
+            "optional": {
+                "images": ("IMAGE",),
+                "google_search": ("BOOLEAN", {"default": False}),
+                "aspect_ratio": ("COMBO", {"options": NANOBANANA2_ASPECT_RATIO_OPTIONS, "default": "auto"}),
+                "resolution": ("COMBO", {"options": NANOBANANA2_RESOLUTION_OPTIONS, "default": "1K"}),
+                "output_format": ("COMBO", {"options": NANOBANANA2_OUTPUT_FORMAT_OPTIONS, "default": "jpg"}),
+                "log": ("BOOLEAN", {"default": True}),
+            },
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("image",)
+    FUNCTION = "generate"
+    CATEGORY = "kie/api"
+
+    def generate(
+        self,
+        prompt: str,
+        google_search: bool = False,
+        aspect_ratio: str = "auto",
+        resolution: str = "1K",
+        output_format: str = "jpg",
+        log: bool = True,
+        poll_interval_s: float = 10.0,
+        timeout_s: int = 300,
+        retry_on_fail: bool = True,
+        max_retries: int = 2,
+        retry_backoff_s: float = 3.0,
+        images: torch.Tensor | None = None,
+    ):
+        image_tensor = run_nanobanana2_image_job(
+            prompt=prompt,
+            aspect_ratio=aspect_ratio,
+            resolution=resolution,
+            output_format=output_format,
+            google_search=google_search,
             log=log,
             poll_interval_s=poll_interval_s,
             timeout_s=timeout_s,
@@ -1565,6 +1644,7 @@ Outputs:
 NODE_CLASS_MAPPINGS = {
     "KIE_GetRemainingCredits": KIE_GetRemainingCredits,
     "KIE_NanoBananaPro_Image": KIE_NanoBananaPro_Image,
+    "KIE_NanoBanana2_Image": KIE_NanoBanana2_Image,
     "KIE_Seedream45_TextToImage": KIE_Seedream45_TextToImage,
     "KIE_Seedream45_Edit": KIE_Seedream45_Edit,
     "KIE_SeedanceV1Pro_Fast_I2V": KIE_SeedanceV1Pro_Fast_I2V,
@@ -1588,6 +1668,7 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "KIE_GetRemainingCredits": "KIE Get Remaining Credits",
     "KIE_NanoBananaPro_Image": "KIE Nano Banana Pro (Image)",
+    "KIE_NanoBanana2_Image": "KIE Nano Banana 2 (Image)",
     "KIE_Seedream45_TextToImage": "KIE Seedream 4.5 Text-To-Image",
     "KIE_Seedream45_Edit": "KIE Seedream 4.5 Edit",
     "KIE_SeedanceV1Pro_Fast_I2V": "KIE Seedance V1 Pro Fast (I2V)",
