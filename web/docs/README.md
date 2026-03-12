@@ -14,6 +14,7 @@ Grok Imagine status: `T2I`, `I2I`, `T2V`, and `I2V` are implemented and document
 - Kling 2.5 I2V Pro: [`KIE_Kling25_I2V_Pro.md`](KIE_Kling25_I2V_Pro.md)
 - Kling 2.6 I2V: [`KIE_Kling26_I2V.md`](KIE_Kling26_I2V.md)
 - Kling 2.6 Motion I2V: [`KIE_Kling26Motion_I2V.md`](KIE_Kling26Motion_I2V.md)
+- Kling 3.0 Motion I2V: [`KIE_Kling3_Motion_I2V.md`](KIE_Kling3_Motion_I2V.md)
 - Kling 2.6 T2V: [`kie_kling26_t2v.md`](kie_kling26_t2v.md)
 - Grok Imagine T2V: [`KIE_GrokImagine_T2V.md`](KIE_GrokImagine_T2V.md)
 - Grok Imagine I2V: [`KIE_GrokImagine_I2V.md`](KIE_GrokImagine_I2V.md)
@@ -25,6 +26,7 @@ Grok Imagine status: `T2I`, `I2I`, `T2V`, and `I2V` are implemented and document
 - Grok Imagine I2V spec: [`KIE_GrokImagine_I2V_Spec.md`](KIE_GrokImagine_I2V_Spec.md)
 - Grok Imagine T2I spec: [`KIE_GrokImagine_T2I_Spec.md`](KIE_GrokImagine_T2I_Spec.md)
 - Grok Imagine I2I spec: [`KIE_GrokImagine_I2I_Spec.md`](KIE_GrokImagine_I2I_Spec.md)
+- Kling 3.0 Motion I2V spec: [`KIE_Kling3_Motion_I2V_Spec.md`](KIE_Kling3_Motion_I2V_Spec.md)
 
 ## Image Nodes
 - Nano Banana Pro: [`KIE_NanoBananaPro_Image.md`](KIE_NanoBananaPro_Image.md)

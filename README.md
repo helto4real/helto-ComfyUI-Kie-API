@@ -77,6 +77,10 @@ This node pack currently includes the following nodes:
 - **Kling 2.6 Motion-Control Image-to-Video**
   - Image-to-video generation with additional motion control parameters.
   - Designed for more directed camera and motion behavior.
+- **Kling 3.0 Motion-Control Image-to-Video**
+  - Generates video from a required reference image and a required motion-driver video.
+  - Mirrors the Kling 2.6 motion-control node shape with Kling 3.0 model routing.
+  - Keeps prompt optional and returns a ComfyUI VIDEO output.
 - **Kling 3.0 (Video)**
   - Supports single-shot or multi-shot generation.
   - Supports optional first/last frame control and named element references.
@@ -139,11 +143,14 @@ Use this section after reviewing Current Available Nodes.
   - [`web/docs/KIE_GrokImagine_I2V_Spec.md`](web/docs/KIE_GrokImagine_I2V_Spec.md) - Grok Imagine image-to-video API reference.
   - [`web/docs/KIE_GrokImagine_T2I_Spec.md`](web/docs/KIE_GrokImagine_T2I_Spec.md) - Grok Imagine text-to-image API reference.
   - [`web/docs/KIE_GrokImagine_I2I_Spec.md`](web/docs/KIE_GrokImagine_I2I_Spec.md) - Grok Imagine image-to-image API reference.
+  - [`web/docs/KIE_Kling3_Motion_I2V_Spec.md`](web/docs/KIE_Kling3_Motion_I2V_Spec.md) - Kling 3.0 motion-control image-to-video API reference.
 - Recommended Kling 3 reading order:
   - [`web/docs/KIE_Kling_Elements.md`](web/docs/KIE_Kling_Elements.md)
   - [`web/docs/KIE_Kling_Elements_Batch.md`](web/docs/KIE_Kling_Elements_Batch.md)
   - [`web/docs/KIE_Kling3_Preflight.md`](web/docs/KIE_Kling3_Preflight.md)
   - [`web/docs/KIE_Kling3_Video.md`](web/docs/KIE_Kling3_Video.md)
+  - [`web/docs/KIE_Kling3_Motion_I2V.md`](web/docs/KIE_Kling3_Motion_I2V.md)
+  - [`web/docs/KIE_Kling3_Motion_I2V_Spec.md`](web/docs/KIE_Kling3_Motion_I2V_Spec.md)
 - Example workflows:
   - [`Kie-AI-Nodes.json`](Kie-AI-Nodes.json)
   - [`Kie-AI-Banana-Pro-Grid.json`](Kie-AI-Banana-Pro-Grid.json)
@@ -212,6 +219,8 @@ This workflow is focused on direct comparison between **Nano Banana Pro** and **
 This is useful for quickly evaluating model preference by prompt type, fidelity, and cost/performance tradeoffs.
 
 ## Changelog
+- 2026-03-12: Added the Kling 3.0 Motion-Control node and synced docs/spec coverage.
+- 2026-03-12: Added the Kling 3.0 Motion-Control API spec doc.
 - 2026-03-07: Synced README/docs coverage for Grok Imagine T2I, I2I, T2V, and I2V, and bumped version to 0.1.10.
 - 2026-03-07: Added the Grok Imagine text-to-video node and synced docs/spec references.
 - 2026-03-07: Added the Grok Imagine image-to-video node and synced docs/spec references.

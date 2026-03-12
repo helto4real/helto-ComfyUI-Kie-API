@@ -44,6 +44,11 @@ from .kie_api.kling26motion_i2v import (
     MODE_OPTIONS as KLING26MOTION_MODE_OPTIONS,
     run_kling26motion_i2v_video,
 )
+from .kie_api.kling3motion_i2v import (
+    CHARACTER_ORIENTATION_OPTIONS as KLING3MOTION_CHARACTER_ORIENTATION_OPTIONS,
+    MODE_OPTIONS as KLING3MOTION_MODE_OPTIONS,
+    run_kling3motion_i2v_video,
+)
 from .kie_api.kling26_t2v import (
     ASPECT_RATIO_OPTIONS as KLING26_T2V_ASPECT_RATIO_OPTIONS,
     DURATION_OPTIONS as KLING26_T2V_DURATION_OPTIONS,
@@ -1036,6 +1041,86 @@ Outputs:
                 time.sleep(backoff)
 
 
+class KIE_Kling3Motion_I2V:
+    HELP = """
+KIE Kling 3.0 Motion-Control (I2V)
+
+Generate a short video clip from a reference image and a motion reference video.
+
+Inputs:
+- prompt: Optional text prompt (up to 2500 chars)
+- images: Source image batch (first image used)
+- video: Motion reference video input (single clip)
+- character_orientation: Match character orientation to image or video
+- mode: 720p or 1080p output resolution
+- poll_interval_s / timeout_s / log
+- retry_on_fail / max_retries / retry_backoff_s
+
+Outputs:
+- VIDEO: ComfyUI video output referencing a temporary .mp4 file
+"""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "prompt": ("STRING", {"multiline": True, "default": ""}),
+                "images": ("IMAGE",),
+                "video": ("VIDEO",),
+            },
+            "optional": {
+                "character_orientation": (
+                    "COMBO",
+                    {"options": KLING3MOTION_CHARACTER_ORIENTATION_OPTIONS, "default": "video"},
+                ),
+                "mode": ("COMBO", {"options": KLING3MOTION_MODE_OPTIONS, "default": "720p"}),
+                "log": ("BOOLEAN", {"default": True}),
+            },
+        }
+
+    RETURN_TYPES = ("VIDEO",)
+    RETURN_NAMES = ("video",)
+    FUNCTION = "generate"
+    CATEGORY = "kie/api"
+
+    def generate(
+        self,
+        prompt: str = "",
+        images: torch.Tensor | None = None,
+        video: object = None,
+        character_orientation: str = "video",
+        mode: str = "720p",
+        log: bool = True,
+        poll_interval_s: float = 10.0,
+        timeout_s: int = 2000,
+        retry_on_fail: bool = True,
+        max_retries: int = 2,
+        retry_backoff_s: float = 3.0,
+    ):
+        attempts = max_retries + 1 if retry_on_fail else 1
+        attempts = max(attempts, 1)
+        backoff = retry_backoff_s if retry_backoff_s >= 0 else 0.0
+
+        for attempt in range(1, attempts + 1):
+            try:
+                video_output = run_kling3motion_i2v_video(
+                    prompt=prompt,
+                    images=images,
+                    video=video,
+                    character_orientation=character_orientation,
+                    mode=mode,
+                    poll_interval_s=poll_interval_s,
+                    timeout_s=timeout_s,
+                    log=log,
+                )
+                return (video_output,)
+            except TransientKieError:
+                if not retry_on_fail or attempt >= attempts:
+                    raise
+                _log(log, f"Retrying (attempt {attempt + 1}/{attempts}) after {backoff}s")
+                time.sleep(backoff)
+
+
 class KIE_KlingElements:
     HELP = """
 KIE Kling Elements
@@ -1972,6 +2057,7 @@ NODE_CLASS_MAPPINGS = {
     "KIE_Kling26_I2V": KIE_Kling26_I2V,
     "KIE_Kling26_T2V": KIE_Kling26_T2V,
     "KIE_Kling26Motion_I2V": KIE_Kling26Motion_I2V,
+    "KIE_Kling3Motion_I2V": KIE_Kling3Motion_I2V,
     "KIE_KlingElements": KIE_KlingElements,
     "KIE_KlingElementsBatch": KIE_KlingElementsBatch,
     "KIE_Kling3_Video": KIE_Kling3_Video,
@@ -2000,6 +2086,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "KIE_Kling26_I2V": "KIE Kling 2.6 (I2V)",
     "KIE_Kling26_T2V": "KIE Kling 2.6 (T2V)",
     "KIE_Kling26Motion_I2V": "KIE Kling 2.6 Motion-Control (I2V)",
+    "KIE_Kling3Motion_I2V": "KIE Kling 3.0 Motion-Control (I2V)",
     "KIE_KlingElements": "KIE Kling Elements",
     "KIE_KlingElementsBatch": "KIE Kling Elements Batch",
     "KIE_Kling3_Video": "KIE Kling 3.0 (Video)",
