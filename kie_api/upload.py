@@ -1,5 +1,8 @@
+import hashlib
 import json
+import time
 from io import BytesIO
+from pathlib import Path
 from typing import Any
 
 import torch
@@ -16,6 +19,21 @@ AUDIO_UPLOAD_PATH = "audio/user-uploads"
 
 def _truncate_url(url: str, max_length: int = 80) -> str:
     return url if len(url) <= max_length else url[:max_length] + "..."
+
+
+def _build_unique_upload_filename(
+    payload_bytes: bytes,
+    *,
+    default_name: str,
+    requested_name: str | None = None,
+) -> str:
+    name = (requested_name or "").strip() or default_name
+    path = Path(name)
+    stem = path.stem or Path(default_name).stem or "upload"
+    suffix = path.suffix or Path(default_name).suffix
+    fingerprint = hashlib.sha1(payload_bytes).hexdigest()[:12]
+    timestamp_ms = int(time.time() * 1000)
+    return f"{stem}_{timestamp_ms}_{fingerprint}{suffix}"
 
 
 def _image_tensor_to_png_bytes(image: torch.Tensor) -> bytes:
@@ -45,11 +63,12 @@ def _image_tensor_to_png_bytes(image: torch.Tensor) -> bytes:
 
 
 def _upload_image(api_key: str, png_bytes: bytes) -> str:
+    filename = _build_unique_upload_filename(png_bytes, default_name="image.png")
     try:
         response = requests.post(
             UPLOAD_URL,
             headers={"Authorization": f"Bearer {api_key}"},
-            files={"file": ("image.png", png_bytes, "image/png")},
+            files={"file": (filename, png_bytes, "image/png")},
             data={"uploadPath": IMAGE_UPLOAD_PATH},
             timeout=120,
         )
@@ -82,12 +101,18 @@ def _upload_video(api_key: str, video_bytes: bytes, filename: str = "video.mp4")
     if not filename.lower().endswith(".mp4"):
         filename = f"{filename}.mp4"
 
+    unique_filename = _build_unique_upload_filename(
+        video_bytes,
+        default_name="video.mp4",
+        requested_name=filename,
+    )
+
     try:
         response = requests.post(
             UPLOAD_URL,
             headers={"Authorization": f"Bearer {api_key}"},
-            files={"file": (filename, video_bytes, "video/mp4")},
-            data={"uploadPath": VIDEO_UPLOAD_PATH, "fileName": filename},
+            files={"file": (unique_filename, video_bytes, "video/mp4")},
+            data={"uploadPath": VIDEO_UPLOAD_PATH, "fileName": unique_filename},
             timeout=300,
         )
     except requests.RequestException as exc:
@@ -125,12 +150,18 @@ def _upload_audio(api_key: str, audio_bytes: bytes, filename: str = "audio.wav")
     else:
         content_type = "application/octet-stream"
 
+    unique_name = _build_unique_upload_filename(
+        audio_bytes,
+        default_name="audio.wav",
+        requested_name=name,
+    )
+
     try:
         response = requests.post(
             UPLOAD_URL,
             headers={"Authorization": f"Bearer {api_key}"},
-            files={"file": (name, audio_bytes, content_type)},
-            data={"uploadPath": AUDIO_UPLOAD_PATH, "fileName": name},
+            files={"file": (unique_name, audio_bytes, content_type)},
+            data={"uploadPath": AUDIO_UPLOAD_PATH, "fileName": unique_name},
             timeout=300,
         )
     except requests.RequestException as exc:
