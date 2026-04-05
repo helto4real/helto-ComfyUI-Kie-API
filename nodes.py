@@ -82,6 +82,12 @@ from .kie_api.flux2_i2i import (
     RESOLUTION_OPTIONS as FLUX2_RESOLUTION_OPTIONS,
     run_flux2_i2i,
 )
+from .kie_api.wan27_image import (
+    ASPECT_RATIO_OPTIONS as WAN27_ASPECT_RATIO_OPTIONS,
+    MODEL_OPTIONS as WAN27_MODEL_OPTIONS,
+    RESOLUTION_OPTIONS as WAN27_RESOLUTION_OPTIONS,
+    run_wan27_image,
+)
 from .kie_api.grok_imagine_t2i import (
     ASPECT_RATIO_OPTIONS as GROK_T2I_ASPECT_RATIO_OPTIONS,
     run_grok_imagine_t2i,
@@ -541,6 +547,98 @@ Outputs:
             log=log,
         )
         return (image_tensor,)
+
+
+class KIE_WAN27_Image:
+    HELP = """
+KIE WAN 2.7 (Image)
+
+Generate or edit images using WAN 2.7 (Standard) or WAN 2.7 Pro.
+
+Inputs:
+- model: wan/2-7-image (standard) or wan/2-7-image-pro (pro)
+- prompt: Text prompt (required, max 5000 chars)
+- images: Optional input images for image-to-image (max 9)
+- aspect_ratio: Output aspect ratio (used when no input images)
+- resolution: 1K / 2K / 4K (4K only for T2I in Pro mode)
+- n: Number of images to generate (1-4 standard, 1-12 sequential mode)
+- enable_sequential: Enable sequential/group image mode
+- thinking_mode: Enable thinking mode (T2I only, sequential disabled)
+- watermark: Add watermark to output
+- seed: Random seed (0-2147483647)
+- poll_interval_s / timeout_s / log
+
+Outputs:
+- IMAGE: ComfyUI image batch (BHWC float32 0-1)
+- STRING: task_id
+"""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "model": (
+                    "COMBO",
+                    {"options": WAN27_MODEL_OPTIONS, "default": "wan/2-7-image"},
+                ),
+                "prompt": ("STRING", {"multiline": True}),
+            },
+            "optional": {
+                "images": ("IMAGE",),
+                "aspect_ratio": (
+                    "COMBO",
+                    {"options": WAN27_ASPECT_RATIO_OPTIONS, "default": "1:1"},
+                ),
+                "resolution": (
+                    "COMBO",
+                    {"options": WAN27_RESOLUTION_OPTIONS, "default": "2K"},
+                ),
+                "n": ("INT", {"default": 4, "min": 1, "max": 12, "step": 1}),
+                "enable_sequential": ("BOOLEAN", {"default": False}),
+                "thinking_mode": ("BOOLEAN", {"default": False}),
+                "watermark": ("BOOLEAN", {"default": False}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 2147483647}),
+                "log": ("BOOLEAN", {"default": True}),
+            },
+        }
+
+    RETURN_TYPES = ("IMAGE", "STRING")
+    RETURN_NAMES = ("image", "task_id")
+    FUNCTION = "generate"
+    CATEGORY = "kie/api"
+
+    def generate(
+        self,
+        model: str,
+        prompt: str,
+        images: torch.Tensor | None = None,
+        aspect_ratio: str = "1:1",
+        resolution: str = "2K",
+        n: int = 4,
+        enable_sequential: bool = False,
+        thinking_mode: bool = False,
+        watermark: bool = False,
+        seed: int = 0,
+        log: bool = True,
+        poll_interval_s: float = 10.0,
+        timeout_s: int = 300,
+    ):
+        image_batch, task_id = run_wan27_image(
+            model=model,
+            prompt=prompt,
+            images=images,
+            aspect_ratio=aspect_ratio,
+            resolution=resolution,
+            n=n,
+            enable_sequential=enable_sequential,
+            thinking_mode=thinking_mode,
+            watermark=watermark,
+            seed=seed,
+            poll_interval_s=poll_interval_s,
+            timeout_s=timeout_s,
+            log=log,
+        )
+        return (image_batch, task_id)
 
 
 class KIE_GrokImagine_T2I:
@@ -2333,6 +2431,7 @@ NODE_CLASS_MAPPINGS = {
     "KIE_Kling3_Video": KIE_Kling3_Video,
     "KIE_Kling3_Preflight": KIE_Kling3_Preflight,
     "KIE_Flux2_I2I": KIE_Flux2_I2I,
+    "KIE_WAN27_Image": KIE_WAN27_Image,
     "KIE_GrokImagine_T2V": KIE_GrokImagine_T2V,
     "KIE_GrokImagine_I2V": KIE_GrokImagine_I2V,
     "KIE_Gemini3Pro_LLM": KIE_Gemini3Pro_LLM,
@@ -2363,6 +2462,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "KIE_Kling3_Video": "KIE Kling 3.0 (Video)",
     "KIE_Kling3_Preflight": "KIE Kling 3.0 Preflight",
     "KIE_Flux2_I2I": "KIE Flux 2 (Image-to-Image)",
+    "KIE_WAN27_Image": "KIE WAN 2.7 (Image)",
     "KIE_GrokImagine_T2V": "KIE Grok Imagine (T2V)",
     "KIE_GrokImagine_I2V": "KIE Grok Imagine (I2V)",
     "KIE_Gemini3Pro_LLM": "KIE Gemini (LLM) [Experimental]",
