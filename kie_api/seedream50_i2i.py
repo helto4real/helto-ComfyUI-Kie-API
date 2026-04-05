@@ -1,7 +1,7 @@
-"""Seedream 4.5 image edit helper.
+"""Seedream 5.0 Lite image-to-image helper.
 
-Implements the Seedream 4.5 edit workflow as documented in
-`_internal/docs/KIE_API_SEEDREAM_45_EDIT_SPEC.md`.
+Implements the Seedream 5.0 Lite image-to-image workflow as documented in
+https://docs.kie.ai/market/seedream-5-lite-image-to-image
 
 This module:
 - validates inputs
@@ -12,7 +12,6 @@ This module:
 """
 
 import time
-from typing import Any
 
 import torch
 
@@ -26,7 +25,7 @@ from .upload import _image_tensor_to_png_bytes, _truncate_url, _upload_image
 from .validation import _validate_image_tensor_batch, _validate_prompt
 
 
-MODEL_NAME = "seedream/4.5-edit"
+MODEL_NAME = "seedream/5-lite-image-to-image"
 ASPECT_RATIO_OPTIONS = ["1:1", "4:3", "3:4", "16:9", "9:16", "2:3", "3:2", "21:9"]
 QUALITY_OPTIONS = ["basic", "high"]
 PROMPT_MAX_LENGTH = 3000
@@ -40,7 +39,7 @@ def _validate_options(aspect_ratio: str, quality: str) -> None:
         raise RuntimeError("Invalid quality. Use the pinned enum options.")
 
 
-def run_seedream45_edit(
+def run_seedream50_i2i(
     prompt: str,
     images: torch.Tensor,
     aspect_ratio: str,
@@ -50,13 +49,14 @@ def run_seedream45_edit(
     timeout_s: int,
     log: bool,
 ) -> torch.Tensor:
-    """Run a Seedream 4.5 image edit job.
+    """Run a Seedream 5.0 Lite image-to-image job.
 
     Args:
         prompt: Edit instruction text.
         images: ComfyUI IMAGE tensor batch (B, H, W, 3).
         aspect_ratio: Output aspect ratio (spec-defined enum).
         quality: Output quality (spec-defined enum).
+        nsfw_checker: Enable NSFW content checker.
         poll_interval_s: Seconds between status polls.
         timeout_s: Maximum seconds to wait for completion.
         log: Enable verbose logging.
@@ -84,7 +84,7 @@ def run_seedream45_edit(
     upload_count = min(total_images, MAX_IMAGE_COUNT)
     image_urls: list[str] = []
     if upload_count > 0:
-        _log(log, f"Uploading {upload_count} edit image(s)...")
+        _log(log, f"Uploading {upload_count} image(s)...")
 
     for idx in range(upload_count):
         png_bytes = _image_tensor_to_png_bytes(images[idx])
@@ -99,12 +99,12 @@ def run_seedream45_edit(
             "image_urls": image_urls,
             "aspect_ratio": aspect_ratio,
             "quality": quality,
-            "nsfw_checker": False,
+            "nsfw_checker": nsfw_checker,
         },
     }
 
     _log(log, f"Sending {len(image_urls)} image URL(s) to createTask")
-    _log(log, "Creating Seedream 4.5 edit task...")
+    _log(log, "Creating Seedream 5.0 Lite image-to-image task...")
     start_time = time.time()
     task_id, create_response_text = _create_task(api_key, payload)
     _log(
