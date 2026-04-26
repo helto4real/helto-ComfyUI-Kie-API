@@ -82,6 +82,11 @@ from .kie_api.flux2_i2i import (
     RESOLUTION_OPTIONS as FLUX2_RESOLUTION_OPTIONS,
     run_flux2_i2i,
 )
+from .kie_api.gpt_image_2_i2i import (
+    ASPECT_RATIO_OPTIONS as GPTIMAGE2_ASPECT_RATIO_OPTIONS,
+    RESOLUTION_OPTIONS as GPTIMAGE2_RESOLUTION_OPTIONS,
+    run_gpt_image_2_i2i,
+)
 from .kie_api.wan27_image import (
     ASPECT_RATIO_OPTIONS as WAN27_ASPECT_RATIO_OPTIONS,
     MODEL_OPTIONS as WAN27_MODEL_OPTIONS,
@@ -1873,6 +1878,70 @@ Outputs:
         return (image_tensor,)
 
 
+class KIE_GPTImage2_I2I:
+    HELP = """
+KIE GPT Image 2 (Image-to-Image)
+
+Edit an image using GPT Image 2.
+
+Inputs:
+- images: Source image batch (1-16 images; all uploaded)
+- prompt: Text prompt (required, up to 20000 chars)
+- aspect_ratio: Output aspect ratio (enum)
+- resolution: 1K, 2K, or 4K (4K not compatible with 1:1)
+- log: Console logging on/off
+
+Outputs:
+- IMAGE: ComfyUI image tensor (BHWC float32 0-1)
+"""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "images": ("IMAGE",),
+                "prompt": ("STRING", {"multiline": True}),
+                "aspect_ratio": (
+                    "COMBO",
+                    {"options": GPTIMAGE2_ASPECT_RATIO_OPTIONS, "default": "auto"},
+                ),
+                "resolution": (
+                    "COMBO",
+                    {"options": GPTIMAGE2_RESOLUTION_OPTIONS, "default": "1K"},
+                ),
+            },
+            "optional": {
+                "log": ("BOOLEAN", {"default": True}),
+            },
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("image",)
+    FUNCTION = "generate"
+    CATEGORY = "kie/api"
+
+    def generate(
+        self,
+        images: torch.Tensor,
+        prompt: str,
+        aspect_ratio: str = "auto",
+        resolution: str = "1K",
+        log: bool = True,
+        poll_interval_s: float = 10.0,
+        timeout_s: int = 300,
+    ):
+        image_tensor = run_gpt_image_2_i2i(
+            prompt=prompt,
+            images=images,
+            aspect_ratio=aspect_ratio,
+            resolution=resolution,
+            poll_interval_s=poll_interval_s,
+            timeout_s=timeout_s,
+            log=log,
+        )
+        return (image_tensor,)
+
+
 class KIE_Gemini3Pro_LLM:
     HELP = """
 KIE Gemini (LLM) [Experimental]
@@ -2431,6 +2500,7 @@ NODE_CLASS_MAPPINGS = {
     "KIE_Kling3_Video": KIE_Kling3_Video,
     "KIE_Kling3_Preflight": KIE_Kling3_Preflight,
     "KIE_Flux2_I2I": KIE_Flux2_I2I,
+    "KIE_GPTImage2_I2I": KIE_GPTImage2_I2I,
     "KIE_WAN27_Image": KIE_WAN27_Image,
     "KIE_GrokImagine_T2V": KIE_GrokImagine_T2V,
     "KIE_GrokImagine_I2V": KIE_GrokImagine_I2V,
@@ -2462,6 +2532,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "KIE_Kling3_Video": "KIE Kling 3.0 (Video)",
     "KIE_Kling3_Preflight": "KIE Kling 3.0 Preflight",
     "KIE_Flux2_I2I": "KIE Flux 2 (Image-to-Image)",
+    "KIE_GPTImage2_I2I": "KIE GPT Image 2 (Image-to-Image)",
     "KIE_WAN27_Image": "KIE WAN 2.7 (Image)",
     "KIE_GrokImagine_T2V": "KIE Grok Imagine (T2V)",
     "KIE_GrokImagine_I2V": "KIE Grok Imagine (I2V)",
